@@ -85,6 +85,39 @@ class pointModel extends point
 		return 0;
 	}
 
+	
+	/**
+	 * @brief Get the point extra_vars
+	 */
+	function getPointExtraVars($member_srl, $from_db = false)
+	{
+		$member_srl = abs($member_srl); 
+
+		// Get from the DB
+		$args =new stdClass();
+		$args->member_srl = $member_srl;
+		$output = executeQuery('point.getPoint', $args);
+ 
+		$extra_vars = new stdClass();
+		if(!isset($output->data->extra_vars))
+		{
+			$extra_vars->cur_date = date("Y/m/d");
+			$extra_vars->document = 0;
+			$extra_vars->comment = 0;
+		}
+		else
+		{
+			$extra_vars = json_decode($output->data->extra_vars);  
+			if(strcmp( $extra_vars->cur_date, date("Y/m/d")) !== 0)
+			{
+				$extra_vars->cur_date = date("Y/m/d");
+				$extra_vars->document = 0;
+				$extra_vars->comment = 0; 
+			} 
+		}
+		return $extra_vars;
+	}
+
 	/**
 	 * @brief Get the level
 	 */

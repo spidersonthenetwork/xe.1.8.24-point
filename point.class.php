@@ -79,6 +79,10 @@ class point extends ModuleObject
 	 */
 	function checkUpdate()
 	{
+		$oDB = &DB::getInstance(); 
+		// 2017.06.13 add point.extra_vars by Seoyong
+		if(!$oDB->isColumnExists("point","extra_vars")) return true;
+		
 		// Get the information of the point module
 		$oModuleModel = getModel('module');
 
@@ -117,6 +121,10 @@ class point extends ModuleObject
 	 */
 	function moduleUpdate()
 	{
+		$oDB = &DB::getInstance(); 
+		// 2017.06.13 add point.extra_vars by Seoyong
+		if(!$oDB->isColumnExists("point","extra_vars")) $oDB->addColumn('point',"extra_vars","text");
+		
 		// Get the information of the point module
 		$oModuleModel = getModel('module');
 		$oModuleController = getController('module');

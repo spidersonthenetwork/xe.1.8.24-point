@@ -79,6 +79,12 @@ class pointController extends point
 			$module_config = $oModuleModel->getModulePartConfig('point',$module_srl);
 			// Get the points of the member
 			$oPointModel = getModel('point');
+			
+			//Get the point info of the member to restrict adding unlimited point by Seoyong
+			$cur_extra_vars = $oPointModel->getPointExtraVars($member_srl, true);
+			if($cur_extra_vars->document > 0) return new Object();
+			$cur_extra_vars->document += 1;
+			
 			$cur_point = $oPointModel->getPoint($member_srl, true);
 
 			$point = $module_config['insert_document'];
@@ -89,7 +95,7 @@ class pointController extends point
 			if(strlen($point) == 0 && !is_int($point)) $point = $config->upload_file;
 			if($obj->uploaded_count) $cur_point += $point * $obj->uploaded_count;
 			// Increase the point
-			$this->setPoint($member_srl,$cur_point);
+			$this->setPoint($member_srl,$cur_point, null, $cur_extra_vars);
 		}
 
 		return new Object();
@@ -114,7 +120,13 @@ class pointController extends point
 			$config = $oModuleModel->getModuleConfig('point');
 			$module_config = $oModuleModel->getModulePartConfig('point',$obj->module_srl);
 			// Get the points of the member
-			$oPointModel = getModel('point');
+			$oPointModel = getModel('point'); 
+			
+			//Get the point info of the member to restrict adding unlimited point by Seoyong
+			$cur_extra_vars = $oPointModel->getPointExtraVars($member_srl, true);
+			if($cur_extra_vars->document > 0) return new Object();
+			$cur_extra_vars->document += 1;
+			
 			$cur_point = $oPointModel->getPoint($oDocument->get('member_srl'), true);
 
 			$point = $module_config['insert_document'];
@@ -125,7 +137,7 @@ class pointController extends point
 			if(strlen($point) == 0 && !is_int($point)) $point = $config->upload_file;
 			if($obj->uploaded_count) $cur_point += $point * $obj->uploaded_count;
 			// Increase the point
-			$this->setPoint($oDocument->get('member_srl'), $cur_point);
+			$this->setPoint($oDocument->get('member_srl'), $cur_point, null, $cur_extra_vars);
 		}
 
 		return new Object();
@@ -196,6 +208,12 @@ class pointController extends point
 		if(!$logged_info->member_srl) return new Object();
 		// Get the points of the member
 		$oPointModel = getModel('point');
+	
+		//Get the point info of the member to restrict adding unlimited point by Seoyong
+		$cur_extra_vars = $oPointModel->getPointExtraVars($member_srl, true);
+		if($cur_extra_vars->document == 0) return new Object();
+		$cur_extra_vars->document -= 1;
+		
 		$cur_point = $oPointModel->getPoint($member_srl, true);
 		// Get the point module information
 		$oModuleModel = getModel('module');
@@ -212,7 +230,7 @@ class pointController extends point
 		if(strlen($point) == 0 && !is_int($point)) $point = $config->upload_file;
 		if($obj->uploaded_count) $cur_point -= $point * $obj->uploaded_count;
 		// Increase the point
-		$this->setPoint($member_srl,$cur_point);
+		$this->setPoint($member_srl,$cur_point, null, $cur_extra_vars);
 
 		return new Object();
 	}
@@ -236,13 +254,19 @@ class pointController extends point
 		$module_config = $oModuleModel->getModulePartConfig('point', $module_srl);
 		// Get the points of the member
 		$oPointModel = getModel('point');
+		
+		//Get the point info of the member to restrict adding unlimied point by Seoyong
+		$cur_extra_vars = $oPointModel->getPointExtraVars($member_srl, true);
+		if($cur_extra_vars->comment > 0) return new Object();
+		$cur_extra_vars->comment += 1;
+		
 		$cur_point = $oPointModel->getPoint($member_srl, true);
 
 		$point = $module_config['insert_comment'];
 		if(strlen($point) == 0 && !is_int($point)) $point = $config->insert_comment;
 		// Increase the point
 		$cur_point += $point;
-		$this->setPoint($member_srl,$cur_point);
+		$this->setPoint($member_srl,$cur_point, null, $cur_extra_vars);
 
 		return new Object();
 	}
@@ -267,6 +291,12 @@ class pointController extends point
 		// Get the point module information
 		$config = $oModuleModel->getModuleConfig('point');
 		$module_config = $oModuleModel->getModulePartConfig('point', $module_srl);
+		
+		//Get the point info of the member to restrict adding unlimited point by Seoyong
+		$cur_extra_vars = $oPointModel->getPointExtraVars($member_srl, true);
+		if($cur_extra_vars->comment == 0) return new Object();
+		$cur_extra_vars->comment -= 1;
+		
 		// Get the points of the member
 		$cur_point = $oPointModel->getPoint($member_srl, true);
 
@@ -276,7 +306,7 @@ class pointController extends point
 		if($point < 0) return new Object();
 		// Increase the point
 		$cur_point -= $point;
-		$this->setPoint($member_srl,$cur_point);
+		$this->setPoint($member_srl,$cur_point, null, $cur_extra_vars);
 
 		return new Object();
 	}
@@ -479,7 +509,7 @@ class pointController extends point
 	/**
 	 * @brief Set points
 	 */
-	function setPoint($member_srl, $point, $mode = null)
+	function setPoint($member_srl, $point, $mode = null, $cur_extra_vars = null)
 	{
 		$member_srl = abs($member_srl);
 		$mode_arr = array('add', 'minus', 'update', 'signup');
@@ -498,6 +528,7 @@ class pointController extends point
 		// Change points
 		$args = new stdClass();
 		$args->member_srl = $member_srl;
+		if(isset($cur_extra_vars))	$args->extra_vars = json_encode($cur_extra_vars);
 		$args->point = $current_point;
 
 		switch($mode)
