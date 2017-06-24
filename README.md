@@ -52,6 +52,8 @@ $ rm -rf xe.1.8.24-point-master/ master.zip
 ![admin point](xe-admin-point.png)
 
 ### 3. Enjoy
+즐기시면 됩니다.
+
 
 ## 소스 책임
 만약을 대비해 기존 소스 백업 및 DB 백업은 기본!
@@ -66,6 +68,6 @@ $ rm -rf xe.1.8.24-point-master/ master.zip
  ## 서비스
  다른 서비스를 추가 중에 있습니다. 
  
- ####  [XE 게시판의 조회수 자연스런 증가  서비스] (https://github.com/spidersonthenetwork/xe.1.8.24-board-readed-count) 
+ ####  [XE 게시판의 조회수 자연스런 증가 ] (https://github.com/spidersonthenetwork/xe.1.8.24-board-readed-count) 
  
  
