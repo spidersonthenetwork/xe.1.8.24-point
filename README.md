@@ -65,7 +65,7 @@ $ rm -rf xe.1.8.24-point-master/ master.zip
 소스 변경 부분을 확인하기 위해서, 소스 리스트에서 '게시글 및 댓글 포인트 하루 1회로 제한' 을 클릭하시면, 변경된 부분을 비교 하실 수 있습니다.
  
 
- ## 서비스들
+ ## 다른 서비스들
  다른 서비스를 추가 중에 있습니다. 
  
  ####  [XE 게시판의 조회수 자연스런 증가 ] (https://github.com/spidersonthenetwork/xe.1.8.24-board-readed-count) 
